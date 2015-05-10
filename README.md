@@ -1,7 +1,6 @@
 # go-cfdg
 
-The source behind web-based [Context Free Art](http://www.contextfreeart.org/) renderer at [cfdg.herokuapp.com](https://cfdg.herokuapp.com/).
-
+The source behind [Context Free Art](http://www.contextfreeart.org/) Playground at [cfdg.herokuapp.com](https://cfdg.herokuapp.com/).
 You can easily run or deploy the app with [heroku-docker](https://devcenter.heroku.com/articles/introduction-local-development-with-docker).
 
 ## Requirements

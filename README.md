@@ -1,13 +1,12 @@
 # go-cfdg
 
 The source behind [Context Free Art](http://www.contextfreeart.org/) Playground at [cfdg.herokuapp.com](https://cfdg.herokuapp.com/).
-You can easily run or deploy the app with [heroku-docker](https://devcenter.heroku.com/articles/introduction-local-development-with-docker).
 
 ## Requirements
 - Go
 - Docker
 - Heroku Toolbelt
-- `heroku-docker` Toolbelt plugin
+- [`heroku-docker`](https://devcenter.heroku.com/articles/introduction-local-development-with-docker) Toolbelt plugin
 
 ## Running Locally
 ```sh

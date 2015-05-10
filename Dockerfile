@@ -1,0 +1,34 @@
+FROM heroku/cedar:14
+
+# install flex
+RUN apt-get update
+RUN apt-get -y --force-yes install flex
+RUN rm -rf /var/cache/apt/archives/*.deb
+
+RUN useradd -d /app -m app
+USER app
+WORKDIR /app
+
+ENV HOME /app
+ENV PORT 3000
+
+# make and install cfdg
+RUN mkdir -p /tmp
+WORKDIR /tmp
+RUN curl -o ContextFreeSource3.0.8.tgz http://glyphic.s3.amazonaws.com/cfa/download/ContextFreeSource3.0.8.tgz
+RUN tar zxvf ContextFreeSource3.0.8.tgz
+WORKDIR /tmp/ContextFreeSource3.0.8
+RUN make
+RUN mkdir -p /app/usr/local/bin
+RUN cp cfdg /app/usr/local/bin
+ENV PATH /app/usr/local/bin:$PATH
+
+RUN mkdir -p /app/.profile.d
+RUN echo "export PATH=\"/app/usr/local/bin:\$PATH\"" >> /app/.profile.d/cfdg.sh
+RUN echo "cd /app/src" >> /app/.profile.d/cfdg.sh
+
+RUN mkdir -p /app/src
+WORKDIR /app/src
+
+ONBUILD COPY . /app/src
+ONBUILD EXPOSE 3000

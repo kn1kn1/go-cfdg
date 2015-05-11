@@ -16,6 +16,7 @@ var templIndex = template.Must(template.ParseFiles(viewsPath + "/index.html"))
 
 func main() {
 	http.Handle("/css/", http.StripPrefix("/css", http.FileServer(http.Dir(viewsPath+"/css"))))
+	http.Handle("/image/", http.StripPrefix("/image", http.FileServer(http.Dir(viewsPath+"/image"))))
 	http.Handle("/js/", http.StripPrefix("/js", http.FileServer(http.Dir(viewsPath+"/js"))))
 
 	http.Handle("/", http.HandlerFunc(handleRoot))
@@ -84,9 +85,6 @@ func render(w http.ResponseWriter, r *http.Request) {
 	go io.Copy(os.Stderr, errReader)
 
 	w.Header().Set("Content-Type", "image/png")
-	w.Header().Set("Pragma", "no-cache")
-	w.Header().Set("Cache-Control", "no-cache")
-	w.Header().Set("Expires", "0")
 
 	// writer.Write([]byte("startshape C rule C{CIRCLE{}5*{r-72}C{s 1 .4r-45x 5}}"))
 	writer.Write([]byte(code))

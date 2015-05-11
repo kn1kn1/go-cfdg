@@ -1,1 +1,1 @@
-web: /app/src/go-cfdg
+web: /app/web/go-cfdg

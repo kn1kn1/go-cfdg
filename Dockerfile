@@ -13,11 +13,9 @@ ENV HOME /app
 ENV PORT 3000
 
 # make and install cfdg
-RUN mkdir -p /tmp
-WORKDIR /tmp
-RUN curl -o ContextFreeSource3.0.8.tgz http://glyphic.s3.amazonaws.com/cfa/download/ContextFreeSource3.0.8.tgz
-RUN tar zxvf ContextFreeSource3.0.8.tgz
-WORKDIR /tmp/ContextFreeSource3.0.8
+RUN mkdir -p /tmp/cfdg
+RUN curl -s http://glyphic.s3.amazonaws.com/cfa/download/ContextFreeSource3.0.8.tgz | tar --strip-components=1 -xz -C /tmp/cfdg
+WORKDIR /tmp/cfdg
 RUN make
 RUN mkdir -p /app/usr/local/bin
 RUN cp cfdg /app/usr/local/bin

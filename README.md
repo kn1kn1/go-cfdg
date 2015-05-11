@@ -10,7 +10,7 @@ The source behind [Context Free Art](http://www.contextfreeart.org/) Playground 
 
 ## Running Locally
 ```sh
-$ git clone git@github.com:kn1kn1/go-cfdg.git
+$ git clone https://github.com/kn1kn1/go-cfdg.git
 $ cd go-cfdg
 $ GOOS=linux GOARCH=amd64 go build
 $ heroku docker:start
@@ -18,7 +18,7 @@ $ heroku docker:start
 
 ## Deploying to Heroku
 ```sh
-$ git clone git@github.com:kn1kn1/go-cfdg.git
+$ git clone https://github.com/kn1kn1/go-cfdg.git
 $ cd go-cfdg
 $ GOOS=linux GOARCH=amd64 go build
 $ heroku create

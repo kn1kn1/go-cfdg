@@ -18,7 +18,6 @@ ENV PATH /go/bin:$PATH
 WORKDIR /go
 COPY go-wrapper /usr/local/bin/
 
-
 RUN useradd -d /app -m app
 USER app
 WORKDIR /app
@@ -28,7 +27,7 @@ ENV PORT 3000
 
 # make and install cfdg
 RUN mkdir -p /tmp/cfdg
-RUN curl -s http://glyphic.s3.amazonaws.com/cfa/download/ContextFreeSource3.0.8.tgz  \
+RUN curl -s http://glyphic.s3.amazonaws.com/cfa/download/ContextFreeSource3.0.8.tgz \
     | tar --strip-components=1 -xz -C /tmp/cfdg
 WORKDIR /tmp/cfdg
 RUN make

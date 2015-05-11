@@ -4,17 +4,26 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Context Free Art Playground</title>
+
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-	<script src="./js/jquery-linedtextarea.js"></script>
-	<link href="./css/jquery-linedtextarea.css" type="text/css" rel="stylesheet" />
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+
+	<script src="js/codemirror.js"></script>
+	<link rel="stylesheet" href="css/codemirror.css">
+	<style>
+  .CodeMirror { height: auto; border: 1px solid #ddd; }
+	.CodeMirror-scroll { max-height: 500px; }
+  .CodeMirror pre { padding-left: 7px; line-height: 1.25; }
+	</style>
 	<script>
 	$(document).ready(function() {
 		var count = 0;
-		$('#code').linedtextarea();
-		$('#code').attr('wrap', 'off');
+		var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+	    lineNumbers: true
+	  });
+
 		$('#renderButton').click(function() {
 			render();
 		})
@@ -41,7 +50,7 @@
 	<div class="container">
 		<div class="row" style="margin: 5px">
 			<div class="col-md-6">
-				<textarea rows="30" cols="70" itemprop="description" id="code" name="code" autocorrect="off" autocomplete="off" autocapitalize="off" spellcheck="false">/*
+				<textarea id="code" name="code">/*
  * http://www.contextfreeart.org/gallery/view.php?id=1647
  */
 startshape main

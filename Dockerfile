@@ -22,7 +22,7 @@ RUN cp cfdg /app/usr/local/bin
 ENV PATH /app/usr/local/bin:$PATH
 
 RUN mkdir -p /app/.profile.d
-RUN echo "export PATH=\"/app/usr/local/bin:\$PATH\"" >> /app/.profile.d/cfdg.sh
+RUN echo "export PATH=\"/app/usr/local/bin:\$PATH\"" > /app/.profile.d/cfdg.sh
 RUN echo "cd /app/src" >> /app/.profile.d/cfdg.sh
 
 RUN mkdir -p /app/src

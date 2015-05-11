@@ -10,8 +10,7 @@ import (
 )
 
 const basePath = "/"
-const viewsPath = "/app/src/views"
-// const viewsPath = "./views"
+const viewsPath = "./views"
 
 var templIndex = template.Must(template.ParseFiles(viewsPath + "/index.html"))
 
@@ -56,7 +55,6 @@ func render(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("code: %s\n", code)
 
 	// cmd := exec.Command("/app/usr/local/bin/cfdg", "/app/src/Clovers.cfdg");
-	// cmd := exec.Command("/app/usr/local/bin/cfdg", "-")
 	cmd := exec.Command("cfdg", "-")
 
 	reader, err := cmd.StdoutPipe()
@@ -70,7 +68,7 @@ func render(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Printf("err: %s\n", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-    reader.Close()
+		reader.Close()
 		return
 	}
 
@@ -78,8 +76,8 @@ func render(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Printf("err: %s\n", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-    reader.Close()
-    errReader.Close()
+		reader.Close()
+		errReader.Close()
 		return
 	}
 
@@ -95,17 +93,17 @@ func render(w http.ResponseWriter, r *http.Request) {
 	writer.Close()
 
 	err = cmd.Start()
-  if err != nil {
+	if err != nil {
 		fmt.Printf("err: %s\n", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-    reader.Close()
-    errReader.Close()
+		reader.Close()
+		errReader.Close()
 		return
 	}
 
-  // io.Copy(os.Stdout, reader)
+	// io.Copy(os.Stdout, reader)
 	io.Copy(w, reader)
 
-  reader.Close()
-  errReader.Close()
+	reader.Close()
+	errReader.Close()
 }

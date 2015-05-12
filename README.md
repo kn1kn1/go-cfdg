@@ -6,7 +6,14 @@ The source behind [Context Free Art](http://www.contextfreeart.org/) Playground 
 - Heroku Toolbelt
 - [`heroku-docker`](https://devcenter.heroku.com/articles/introduction-local-development-with-docker) Toolbelt plugin
 
-## Running Locally
+## Running Locally with Go
+```sh
+$ git clone https://github.com/kn1kn1/go-cfdg.git
+$ cd go-cfdg
+$ PORT=3000 go run main.go
+```
+
+## Running Locally with Docker
 ```sh
 $ git clone https://github.com/kn1kn1/go-cfdg.git
 $ cd go-cfdg

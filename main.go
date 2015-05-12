@@ -103,9 +103,9 @@ func check(w http.ResponseWriter, r *http.Request) {
 
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(errReader)
-	s := buf.String()
-	fmt.Printf("check output: %s\n", s)
-	replaced := strings.Replace(s, "Reading rules file -\n", "", -1)
+	errStr := buf.String()
+	fmt.Printf("check output: %s\n", errStr)
+	message := strings.Replace(errStr, "Reading rules file -\n", "", -1)
 	reader.Close()
 	errReader.Close()
 
@@ -114,18 +114,18 @@ func check(w http.ResponseWriter, r *http.Request) {
 		Message string
 	}
 	response := Response{
-		Error:   strings.Contains(replaced, "Error"),
-		Message: replaced,
+		Error:   strings.Contains(message, "Error"),
+		Message: message,
 	}
-	bytes, err := json.Marshal(response)
+	jsonBytes, err := json.Marshal(response)
 	if err != nil {
 		handleErr(w, err, nil, nil)
 		return
 	}
-	os.Stdout.Write(bytes)
+	// os.Stdout.Write(jsonBytes)
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(bytes)
+	w.Write(jsonBytes)
 }
 
 func render(w http.ResponseWriter, r *http.Request) {

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,109 +17,152 @@
   <script src="js/codemirror.js"></script>
   <link rel="stylesheet" href="css/codemirror.css">
   <style>
-    .CodeMirror { height: auto; border: 1px solid #ddd; }
-    .CodeMirror-scroll { max-height: 500px; }
-    .CodeMirror pre { padding-left: 7px; line-height: 1.25; }
+    .CodeMirror {
+      height: auto;
+      border: 1px solid #ddd;
+    }
+
+    .CodeMirror-scroll {
+      max-height: 500px;
+    }
+
+    .CodeMirror pre {
+      padding-left: 7px;
+      line-height: 1.25;
+    }
   </style>
   <style type="text/css">
-    .rightJustified { text-align: right; }
+    .rightJustified {
+      text-align: right;
+    }
   </style>
 
   <script>
-  $(document).ready(function() {
-    var count = 0;
-    var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-      lineNumbers: true
-    });
+    $(document).ready(function() {
+      var initialCode = '/* \n' +
+        ' * http://www.contextfreeart.org/gallery/view.php?id=1647\n' +
+        ' */\n' +
+        'startshape main\n' +
+        '\n' +
+        'background {sat .3 h 200}\n' +
+        '\n' +
+        'rule main {\n' +
+        '  CLOVER {b .2}\n' +
+        '  main {z -1 s 0.8 x 4 r 100}\n' +
+        '}\n' +
+        '\n' +
+        'rule CLOVER {\n' +
+        '  CIRCLE {}\n' +
+        '  CLOVER {x 1.0 s 0.99 r 90 b 0.01}\n' +
+        '}';
 
-    $('#renderButton').click(function() {
-      $('#output').empty();
-      render();
-    })
+      var count = 0;
+      var codearea = document.getElementById("code");
+      codearea.value = initialCode;
+      var editor = CodeMirror.fromTextArea(codearea, {
+        lineNumbers: true
+      });
 
-    var variation = 'A';
-    var dirty = false;
-    $('#variation').val(variation);
-    $('#variation').keydown(function(e) {
-      dirty = true;
-      return alphaOnly(e);
-    });
+      $('#renderButton').click(function() {
+        $('#output').empty();
+        render();
+      })
 
-    function alphaOnly(event) {
-      var key = event.keyCode;
-      return ((key >= 65 && key <= 90) || key == 8);
-    };
+      var variation = 'A';
+      var dirty = false;
+      $('#variation').val(variation);
+      $('#variation').keydown(function(e) {
+        dirty = true;
+        return alphaOnly(e);
+      });
 
-    function render() {
-      var code = editor.getValue();
-      var encoded = encodeURIComponent(code);
-      var checkUrl = 'check?code=' + encoded;
-      $.ajax(checkUrl)
-        .done(function(data) {
-          if (data && data["Error"]) {
-            var err = $('<p>',{id:'err'}).css({padding:'2px',backgroundColor:'yellow'});
-            err.append(document.createTextNode(data["Message"]));
+      function alphaOnly(event) {
+        var key = event.keyCode;
+        return ((key >= 65 && key <= 90) || key == 8);
+      };
+
+      function render() {
+        var code = editor.getValue();
+        var encoded = encodeURIComponent(code);
+        var checkUrl = 'check?code=' + encoded;
+        $.ajax(checkUrl)
+          .done(function(data) {
+            if (data && data["Error"]) {
+              var err = $('<p>', {
+                id: 'err'
+              }).css({
+                padding: '2px',
+                backgroundColor: 'yellow'
+              });
+              err.append(document.createTextNode(data["Message"]));
+              $('#output').append(err);
+              return;
+            }
+
+            var varVal = $('#variation').val();
+            if (dirty && varVal !== variation) {
+              variation = varVal.toUpperCase();
+              dirty = false;
+            } else if (count !== 0) {
+              variation = add1(variation);
+            }
+            $('#variation').val(variation);
+
+            // var renderUrl = 'https://cfdg.herokuapp.com/render?code=' + encoded + '&count=' + count;
+            var renderUrl = 'render?code=' + encoded + '&count=' + count;
+
+            count++;
+            $('#output').append($('<img>', {
+              id: 'theImg',
+              src: renderUrl
+            }));
+          })
+          .fail(function(jqXHR) {
+            var err = $('<p>', {
+              id: 'err'
+            }).css({
+              padding: '2px',
+              backgroundColor: 'yellow'
+            });
+            err.append(document.createTextNode("status: " + jqXHR.status + ", statusText: " + jqXHR.statusText + ", url: " + checkUrl));
             $('#output').append(err);
             return;
-          }
-
-          var varVal = $('#variation').val();
-          if (dirty && varVal !== variation) {
-            variation = varVal.toUpperCase();
-            dirty = false;
-          } else if (count !== 0) {
-            variation = add1(variation);
-          }
-          $('#variation').val(variation);
-
-          // var renderUrl = 'https://cfdg.herokuapp.com/render?code=' + encoded + '&count=' + count;
-          var renderUrl = 'render?code=' + encoded + '&count=' + count;
-
-          count++;
-          $('#output').append($('<img>',{id:'theImg',src:renderUrl}));
-        })
-        .fail(function(jqXHR) {
-          var err = $('<p>',{id:'err'}).css({padding:'2px',backgroundColor:'yellow'});
-          err.append(document.createTextNode("status: " + jqXHR.status
-             + ", statusText: " + jqXHR.statusText + ", url: " + checkUrl));
-          $('#output').append(err);
-          return;
-        });
-    }
-
-    function add1(str) {
-      var codes, valueLen, i, carry, charCode, code, len, newValue;
-      str = str.toUpperCase();
-      codes = [];
-      valueLen = str.length;
-      for (i = 0, valueLen; i < valueLen; i++) {
-        codes[i] = str.charCodeAt(i);
+          });
       }
-      carry = 1;
-      for (i = valueLen - 1; i >= 0; i--) {
-        charCode = codes[i];
-        charCode = charCode + carry;
-        if (charCode > 90) {
-          codes[i] = 65;
-          carry = 1;
-        } else {
-          codes[i] = charCode;
-          carry = 0;
+
+      function add1(str) {
+        var codes, valueLen, i, carry, charCode, code, len, newValue;
+        str = str.toUpperCase();
+        codes = [];
+        valueLen = str.length;
+        for (i = 0, valueLen; i < valueLen; i++) {
+          codes[i] = str.charCodeAt(i);
         }
-      }
-      if ((carry === 1) && (valueLen === 6)) {
-        return 'A';
-      }
-      newValue = carry === 1 ? 'A' : '';
-      for (i = 0, len = codes.length; i < len; i++) {
-        code = codes[i];
-        newValue = newValue + String.fromCharCode(code);
-      }
-       return newValue;
-    };
+        carry = 1;
+        for (i = valueLen - 1; i >= 0; i--) {
+          charCode = codes[i];
+          charCode = charCode + carry;
+          if (charCode > 90) {
+            codes[i] = 65;
+            carry = 1;
+          } else {
+            codes[i] = charCode;
+            carry = 0;
+          }
+        }
+        if ((carry === 1) && (valueLen === 6)) {
+          return 'A';
+        }
+        newValue = carry === 1 ? 'A' : '';
+        for (i = 0, len = codes.length; i < len; i++) {
+          code = codes[i];
+          newValue = newValue + String.fromCharCode(code);
+        }
+        return newValue;
+      };
 
-    render();
-  });
+      render();
+    });
   </script>
 </head>
 
@@ -129,22 +173,7 @@
   <div class="container">
     <div class="row" style="margin: 5px">
       <div class="col-md-6">
-        <textarea id="code" name="code">/*
- * http://www.contextfreeart.org/gallery/view.php?id=1647
- */
-startshape main
-
-background {sat .3 h 200}
-
-rule main {
-  CLOVER {b .2}
-  main {z -1 s 0.8 x 4 r 100}
-}
-
-rule CLOVER {
-  CIRCLE {}
-  CLOVER {x 1.0 s 0.99 r 90 b 0.01}
-}</textarea>
+        <textarea id="code" name="code"></textarea>
         <div style="margin: 5px">
           <b>Variation</b> ('A'-'ZZZZZZ')
           <input type="text" id="variation" maxlength="6" class="rightJustified">
@@ -153,11 +182,12 @@ rule CLOVER {
           <input type="button" value="Render" id="renderButton">
         </div>
       </div>
-      <div id="output"class="col-md-6"></div>
+      <div id="output" class="col-md-6"></div>
     </div>
     <div class="row" style="margin: 5px">
       <center><a href="https://github.com/kn1kn1/go-cfdg">Project Home at GitHub</a></center>
-    <div>
-  </div>
+      <div>
+      </div>
 </body>
+
 </html>

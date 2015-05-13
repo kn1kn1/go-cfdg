@@ -55,6 +55,7 @@
         '  CIRCLE {}\n' +
         '  CLOVER {x 1.0 s 0.99 r 90 b 0.01}\n' +
         '}';
+      var previousCode = initialCode;
 
       var count = 0;
       var codearea = document.getElementById("code");
@@ -88,6 +89,7 @@
         $.ajax(checkUrl)
           .done(function(data) {
             if (data && data["Error"]) {
+              previousCode = code;
               var err = $('<p>', {
                 id: 'err'
               }).css({
@@ -102,10 +104,11 @@
             var varVal = $('#variation').val();
             if (dirty && varVal !== variation) {
               variation = varVal.toUpperCase();
-              dirty = false;
-            } else if (count !== 0) {
+            } else if (count !== 0 && previousCode === code) {
               variation = add1(variation);
             }
+            dirty = false;
+            previousCode = code;
             $('#variation').val(variation);
 
             // var renderUrl = 'https://cfdg.herokuapp.com/render?code=' + encoded + '&count=' + count;
@@ -118,6 +121,7 @@
             }));
           })
           .fail(function(jqXHR) {
+            previousCode = code;
             var err = $('<p>', {
               id: 'err'
             }).css({

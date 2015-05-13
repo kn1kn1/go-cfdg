@@ -138,9 +138,16 @@ func render(w http.ResponseWriter, r *http.Request) {
 	v := u.Query()
 	code := v.Get("code")
 	fmt.Printf("render code: %s\n", code)
+	variation := v.Get("v")
+	fmt.Printf("render variation: %s\n", variation)
 
 	// cmd := exec.Command("/app/usr/local/bin/cfdg", "/app/web/Clovers.cfdg");
-	cmd := exec.Command("cfdg", "-")
+	var cmd *exec.Cmd
+	if len(variation) > 0 {
+		cmd = exec.Command("cfdg", "-v", variation, "-")
+	} else {
+		cmd = exec.Command("cfdg", "-")
+	}
 
 	reader, err := cmd.StdoutPipe()
 	if err != nil {

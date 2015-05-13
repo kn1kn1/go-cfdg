@@ -111,8 +111,8 @@
             previousCode = code;
             $('#variation').val(variation);
 
-            // var renderUrl = 'https://cfdg.herokuapp.com/render?code=' + encoded + '&count=' + count;
-            var renderUrl = 'render?code=' + encoded + '&count=' + count;
+            // var renderUrl = 'https://cfdg.herokuapp.com/render?code=' + encoded + '&v=' + variation;
+            var renderUrl = 'render?code=' + encoded + '&v=' + variation;
 
             count++;
             $('#output').append($('<img>', {

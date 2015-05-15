@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
 
   <script src="js/codemirror.js"></script>
+  <script src="js/cfdg-examples.js"></script>
   <link rel="stylesheet" href="css/codemirror.css">
   <style>
     .CodeMirror {
@@ -39,22 +40,13 @@
 
   <script>
     $(document).ready(function() {
-      var initialCode = '/* \n' +
-        ' * http://www.contextfreeart.org/gallery/view.php?id=1647\n' +
-        ' */\n' +
-        'startshape main\n' +
-        '\n' +
-        'background {sat .3 h 200}\n' +
-        '\n' +
-        'rule main {\n' +
-        '  CLOVER {b .2}\n' +
-        '  main {z -1 s 0.8 x 4 r 100}\n' +
-        '}\n' +
-        '\n' +
-        'rule CLOVER {\n' +
-        '  CIRCLE {}\n' +
-        '  CLOVER {x 1.0 s 0.99 r 90 b 0.01}\n' +
-        '}';
+      var idx;
+      for (idx in CFDG.examples) {
+        var title = CFDG.examples[idx].title;
+        $('#examples').append($('<option>').html(title).val(idx));
+      }
+      var selectedIdx = 5;
+      var initialCode = CFDG.examples[selectedIdx].code;
       var previousCode = initialCode;
 
       var count = 0;
@@ -79,8 +71,17 @@
 
       function alphaOnly(event) {
         var key = event.keyCode;
-        return ((key >= 65 && key <= 90) || key == 8);
+        return ((key >= 65 && key <= 90) || key == 8 || (key >= 37 && key <= 40));
       };
+
+      function onSelectedExampleChanged() {
+        var selectedIdx = $('#examples').val();
+        editor.setValue(CFDG.examples[selectedIdx].code);
+        $('#output').empty();
+        render();
+      };
+
+      $('#examples').change(onSelectedExampleChanged);
 
       function render() {
         var code = editor.getValue();
@@ -165,7 +166,9 @@
         return newValue;
       };
 
-      render();
+      $('#examples').val(selectedIdx);
+      onSelectedExampleChanged();
+
     });
   </script>
 </head>
@@ -175,20 +178,24 @@
     <h1>Context Free Art Playground</h1>
   </div>
   <div class="container">
-    <div class="row" style="margin: 5px">
+    <div class="row" style="padding: 5px">
       <div class="col-md-6">
         <textarea id="code" name="code"></textarea>
-        <div style="margin: 5px">
+        <div style="padding-top: 5px">
+          <select id="examples" name="examples">
+          </select>
+        </div>
+        <div style="padding: 5px">
           <b>Variation</b> ('A'-'ZZZZZZ')
           <input type="text" id="variation" maxlength="6" class="rightJustified">
         </div>
-        <div style="margin: 5px">
+        <div style="padding-top: 10px">
           <input type="button" value="Render" id="renderButton">
         </div>
       </div>
       <div id="output" class="col-md-6"></div>
     </div>
-    <div class="row" style="margin: 5px">
+    <div class="row" style="padding: 5px">
       <center><a href="https://github.com/kn1kn1/go-cfdg">Project Home at GitHub</a></center>
     </div>
   </div>

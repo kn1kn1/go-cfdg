@@ -47,7 +47,7 @@
       var previousCode = initialCode;
 
       var count = 0;
-      var codearea = document.getElementById("code");
+      var codearea = document.getElementById('code');
       codearea.value = initialCode;
       var editor = CodeMirror.fromTextArea(codearea, {
         lineNumbers: true
@@ -58,7 +58,7 @@
         render();
       })
 
-      var variation = 'A';
+      var variation = '';
       var dirty = false;
       $('#variation').val(variation);
       $('#variation').keydown(function(e) {
@@ -77,13 +77,35 @@
         $('#output').empty();
         render();
       };
-
       $('#examples').change(onSelectedExampleChanged);
+
+      function onRandomVariationChanged() {
+        var isRandom = $('#random').prop('checked');
+        if (isRandom) {
+          $('#variation').attr('disabled', 'disabled');
+          $('#variation').css('color', 'gray')
+        } else {
+          $('#variation').removeAttr('disabled');
+          $('#variation').css('color', 'black')
+        }
+      };
+      $('#random').change(onRandomVariationChanged);
 
       function render() {
         var code = editor.getValue();
         var encoded = encodeURIComponent(code);
         var checkUrl = 'check?code=' + encoded;
+        if ($('#random').prop('checked')) {
+          var rvariation = '';
+          var rcode;
+          var rlen = 1 + Math.floor(Math.random() * 6);
+          for (i = 0; i < rlen; i++) {
+            rcode = 65 + Math.floor(Math.random() * 26);
+            rvariation = rvariation + String.fromCharCode(rcode);
+          }
+          variation = rvariation;
+        }
+
         $.ajax(checkUrl)
           .done(function(data) {
             if (data && data["Error"]) {
@@ -100,10 +122,12 @@
             }
 
             var varVal = $('#variation').val();
-            if (dirty && varVal !== variation) {
-              variation = varVal.toUpperCase();
-            } else if (count !== 0 && previousCode === code) {
-              variation = add1(variation);
+            if (!$('#random').prop('checked')) {
+              if (dirty && varVal !== variation) {
+                variation = varVal.toUpperCase();
+              } else if (count !== 0 && previousCode === code) {
+                variation = add1(variation);
+              }
             }
             dirty = false;
             previousCode = code;
@@ -126,7 +150,7 @@
               padding: '2px',
               backgroundColor: 'yellow'
             });
-            err.append(document.createTextNode("status: " + jqXHR.status + ", statusText: " + jqXHR.statusText + ", url: " + checkUrl));
+            err.append(document.createTextNode('status: ' + jqXHR.status + ', statusText: ' + jqXHR.statusText + ', url: ' + checkUrl));
             $('#output').append(err);
             return;
           });
@@ -163,6 +187,10 @@
         return newValue;
       };
 
+      $('#random').prop('checked', true);
+      $('#variation').attr('disabled', 'disabled');
+      $('#variation').css('color', 'gray');
+
       $('#examples').val(selectedIdx);
       onSelectedExampleChanged();
 
@@ -185,6 +213,7 @@
         <div style="padding: 5px">
           <b>Variation</b> ('A'-'ZZZZZZ')
           <input type="text" id="variation" maxlength="6" class="rightJustified">
+          <input type="checkbox" id="random"> random
         </div>
         <div style="padding-top: 10px">
           <input type="button" value="Render" id="renderButton">

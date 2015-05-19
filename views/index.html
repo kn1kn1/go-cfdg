@@ -38,8 +38,10 @@
     $(document).ready(function() {
       var idx;
       for (idx in CFDG.examples) {
-        var title = CFDG.examples[idx].title;
-        $('#examples').append($('<option>').html(title).val(idx));
+        if (CFDG.examples.hasOwnProperty(idx)) {
+          var title = CFDG.examples[idx].title;
+          $('#examples').append($('<option>').html(title).val(idx));
+        }
       }
       var randnum = 0 + Math.floor(Math.random() * CFDG.examples.length);
       var selectedIdx = randnum;
@@ -56,7 +58,7 @@
       $('#renderButton').click(function() {
         $('#output').empty();
         render();
-      })
+      });
 
       var variation = '';
       var dirty = false;
@@ -69,26 +71,26 @@
       function alphaOnly(event) {
         var key = event.keyCode;
         return ((key >= 65 && key <= 90) || key == 8 || (key >= 37 && key <= 40));
-      };
+      }
 
       function onSelectedExampleChanged() {
         var selectedIdx = $('#examples').val();
         editor.setValue(CFDG.examples[selectedIdx].code);
         $('#output').empty();
         render();
-      };
+      }
       $('#examples').change(onSelectedExampleChanged);
 
       function onRandomVariationChanged() {
         var isRandom = $('#random').prop('checked');
         if (isRandom) {
           $('#variation').attr('disabled', 'disabled');
-          $('#variation').css('color', 'gray')
+          $('#variation').css('color', 'gray');
         } else {
           $('#variation').removeAttr('disabled');
-          $('#variation').css('color', 'black')
+          $('#variation').css('color', 'black');
         }
-      };
+      }
       $('#random').change(onRandomVariationChanged);
 
       function render() {
@@ -99,7 +101,7 @@
           var rvariation = '';
           var rcode;
           var rlen = 1 + Math.floor(Math.random() * 6);
-          for (i = 0; i < rlen; i++) {
+          for (var i = 0; i < rlen; i++) {
             rcode = 65 + Math.floor(Math.random() * 26);
             rvariation = rvariation + String.fromCharCode(rcode);
           }
@@ -108,7 +110,7 @@
 
         $.ajax(checkUrl)
           .done(function(data) {
-            if (data && data["Error"]) {
+            if (data && data.Error) {
               previousCode = code;
               var err = $('<p>', {
                 id: 'err'
@@ -116,7 +118,7 @@
                 padding: '2px',
                 backgroundColor: 'yellow'
               });
-              err.append(document.createTextNode(data["Message"]));
+              err.append(document.createTextNode(data.Message));
               $('#output').append(err);
               return;
             }
@@ -185,7 +187,7 @@
           newValue = newValue + String.fromCharCode(code);
         }
         return newValue;
-      };
+      }
 
       $('#random').prop('checked', true);
       $('#variation').attr('disabled', 'disabled');

@@ -3,17 +3,22 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"html/template"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 )
 
-const basePath = "/"
-const viewsPath = "./views"
+const (
+	basePath   = "/"
+	viewsPath  = "./views"
+	cmdTimeout = 15 * time.Second
+)
 
 var templIndex = template.Must(template.ParseFiles(viewsPath + "/index.html"))
 
@@ -27,9 +32,9 @@ func main() {
 }
 
 func handleRoot(w http.ResponseWriter, req *http.Request) {
-	fmt.Printf("req.URL.Path: %s\n", req.URL.Path)
+	log.Printf("req.URL.Path: %s\n", req.URL.Path)
 	basePathLen := len(basePath)
-	fmt.Printf("req.URL.Path[basePathLen:]: %s\n", req.URL.Path[basePathLen:])
+	log.Printf("req.URL.Path[basePathLen:]: %s\n", req.URL.Path[basePathLen:])
 	path := req.URL.Path[basePathLen:]
 
 	switch path {
@@ -50,7 +55,7 @@ func handleIndex(w http.ResponseWriter, req *http.Request) {
 }
 
 func handleErr(w http.ResponseWriter, err error, reader io.ReadCloser, errReader io.ReadCloser) {
-	fmt.Printf("err: %s\n", err)
+	log.Printf("err: %v\n", err)
 	http.Error(w, err.Error(), http.StatusInternalServerError)
 	if reader != nil {
 		reader.Close()
@@ -69,7 +74,7 @@ func check(w http.ResponseWriter, r *http.Request) {
 	u := r.URL
 	v := u.Query()
 	code := v.Get("code")
-	fmt.Printf("check code: %s\n", code)
+	log.Printf("check code: %s\n", code)
 
 	cmd := exec.Command("cfdg", "-C", "-")
 
@@ -104,7 +109,7 @@ func check(w http.ResponseWriter, r *http.Request) {
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(errReader)
 	errStr := buf.String()
-	fmt.Printf("check output: %s\n", errStr)
+	log.Printf("check output: %s\n", errStr)
 	message := strings.Replace(errStr, "Reading rules file -\n", "", -1)
 	reader.Close()
 	errReader.Close()
@@ -137,9 +142,9 @@ func render(w http.ResponseWriter, r *http.Request) {
 	u := r.URL
 	v := u.Query()
 	code := v.Get("code")
-	fmt.Printf("render code: %s\n", code)
+	log.Printf("render code: %s\n", code)
 	variation := v.Get("v")
-	fmt.Printf("render variation: %s\n", variation)
+	log.Printf("render variation: %s\n", variation)
 
 	// cmd := exec.Command("/app/usr/local/bin/cfdg", "/app/web/Clovers.cfdg");
 	var cmd *exec.Cmd
@@ -169,6 +174,9 @@ func render(w http.ResponseWriter, r *http.Request) {
 
 	go io.Copy(os.Stderr, errReader)
 
+	// go io.Copy(os.Stdout, reader)
+	go io.Copy(w, reader)
+
 	w.Header().Set("Content-Type", "image/png")
 
 	// writer.Write([]byte("startshape C rule C{CIRCLE{}5*{r-72}C{s 1 .4r-45x 5}}"))
@@ -181,8 +189,23 @@ func render(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// io.Copy(os.Stdout, reader)
-	io.Copy(w, reader)
+	done := make(chan error, 1)
+	go func() { done <- cmd.Wait() }()
+	select {
+	case <-time.After(cmdTimeout):
+		err := cmd.Process.Kill()
+		if err != nil {
+			log.Printf("failed to kill: %v\n", err)
+		}
+		<-done // allow goroutine to exit
+		err = errors.New("cfdg cmd timeout! process killed")
+		handleErr(w, err, reader, errReader)
+	case err := <-done:
+		if err != nil {
+			log.Printf("process done with error = %v\n", err)
+			handleErr(w, err, reader, errReader)
+		}
+	}
 
 	reader.Close()
 	errReader.Close()

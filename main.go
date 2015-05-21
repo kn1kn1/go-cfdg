@@ -174,8 +174,16 @@ func render(w http.ResponseWriter, r *http.Request) {
 
 	go io.Copy(os.Stderr, errReader)
 
-	// go io.Copy(os.Stdout, reader)
-	go io.Copy(w, reader)
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Printf("got panic while io.Copy(w, reader) and recovered - %v", r)
+			}
+		}()
+		// panic("something fatal!")
+		// io.Copy(os.Stdout, reader)
+		io.Copy(w, reader)
+	}()
 
 	w.Header().Set("Content-Type", "image/png")
 

@@ -174,17 +174,6 @@ func render(w http.ResponseWriter, r *http.Request) {
 
 	go io.Copy(os.Stderr, errReader)
 
-	go func() {
-		defer func() {
-			if r := recover(); r != nil {
-				log.Printf("got panic while io.Copy(w, reader) and recovered - %v", r)
-			}
-		}()
-		// panic("something fatal!")
-		// io.Copy(os.Stdout, reader)
-		io.Copy(w, reader)
-	}()
-
 	w.Header().Set("Content-Type", "image/png")
 
 	// writer.Write([]byte("startshape C rule C{CIRCLE{}5*{r-72}C{s 1 .4r-45x 5}}"))
@@ -198,7 +187,18 @@ func render(w http.ResponseWriter, r *http.Request) {
 	}
 
 	done := make(chan error, 1)
-	go func() { done <- cmd.Wait() }()
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Printf("got panic while io.Copy(w, reader) and recovered - %v", r)
+			}
+		}()
+		// panic("something fatal!")
+		// io.Copy(os.Stdout, reader)
+		_, err := io.Copy(w, reader)
+		done <- err
+	}()
+	// go func() { done <- cmd.Wait() }()
 	select {
 	case <-time.After(cmdTimeout):
 		err := cmd.Process.Kill()

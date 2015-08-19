@@ -40,6 +40,6 @@ RUN echo "cd /app/web" >> /app/.profile.d/cfdg.sh
 RUN mkdir -p /app/web
 WORKDIR /app/web
 
-ONBUILD COPY . /app/web
-ONBUILD RUN cd /app/web && go build -o go-cfdg
-ONBUILD EXPOSE 3000
+COPY . /app/web
+RUN cd /app/web && go build -o go-cfdg
+EXPOSE 3000

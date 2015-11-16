@@ -6,15 +6,20 @@ RUN apt-get -y --force-yes install flex
 RUN rm -rf /var/cache/apt/archives/*.deb
 
 # install golang
-ENV GOLANG_VERSION 1.4.2
-RUN mkdir -p /usr/src
-RUN curl -sSL https://golang.org/dl/go$GOLANG_VERSION.src.tar.gz \
-		| tar -v -C /usr/src -xz
-RUN cd /usr/src/go/src && ./make.bash --no-clean 2>&1
-ENV PATH /usr/src/go/bin:$PATH
-RUN mkdir -p /go/src /go/bin && chmod -R 777 /go
+#  cf. https://github.com/docker-library/golang/blob/51d6eacd41fe80d41105142b9ad32f575082970f/1.5/Dockerfile
+ENV GOLANG_VERSION 1.5.1
+ENV GOLANG_DOWNLOAD_URL https://golang.org/dl/go$GOLANG_VERSION.linux-amd64.tar.gz
+ENV GOLANG_DOWNLOAD_SHA1 46eecd290d8803887dec718c691cc243f2175fe0
+
+RUN curl -fsSL "$GOLANG_DOWNLOAD_URL" -o golang.tar.gz \
+	&& echo "$GOLANG_DOWNLOAD_SHA1  golang.tar.gz" | sha1sum -c - \
+	&& tar -C /usr/local -xzf golang.tar.gz \
+	&& rm golang.tar.gz
+
 ENV GOPATH /go
-ENV PATH /go/bin:$PATH
+ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+
+RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
 RUN useradd -d /app -m app
 USER app

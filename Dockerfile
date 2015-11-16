@@ -35,11 +35,11 @@ ENV PATH /app/usr/local/bin:$PATH
 
 RUN mkdir -p /app/.profile.d
 RUN echo "export PATH=\"/app/usr/local/bin:\$PATH\"" > /app/.profile.d/cfdg.sh
-RUN echo "cd /app/web" >> /app/.profile.d/cfdg.sh
+RUN echo "cd /app/user" >> /app/.profile.d/cfdg.sh
 
-RUN mkdir -p /app/web
-WORKDIR /app/web
+RUN mkdir -p /app/user
+WORKDIR /app/user
 
-ONBUILD COPY . /app/web
-ONBUILD RUN cd /app/web && go build -o go-cfdg
-ONBUILD EXPOSE 3000
+COPY . /app/user
+RUN cd /app/user && go build -o go-cfdg
+EXPOSE 3000

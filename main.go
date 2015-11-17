@@ -193,12 +193,11 @@ func render(w http.ResponseWriter, r *http.Request) {
 				log.Printf("got panic while io.Copy(w, reader) and recovered - %v", r)
 			}
 		}()
-		// panic("something fatal!")
-		// io.Copy(os.Stdout, reader)
+		// _, err := io.Copy(os.Stdout, reader)
 		_, err := io.Copy(w, reader)
 		done <- err
 	}()
-	// go func() { done <- cmd.Wait() }()
+
 	select {
 	case <-time.After(cmdTimeout):
 		err := cmd.Process.Kill()

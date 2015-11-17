@@ -30,3 +30,8 @@ $ heroku create
 $ heroku docker:release
 $ heroku open
 ```
+
+## Build Status
+
+[![Build Status](https://travis-ci.org/kn1kn1/go-cfdg.svg?branch=master)](https://travis-ci.org/kn1kn1/go-cfdg)
+[![Circle CI](https://circleci.com/gh/kn1kn1/go-cfdg.svg?style=shield)](https://circleci.com/gh/kn1kn1/go-cfdg)

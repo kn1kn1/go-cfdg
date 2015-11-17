@@ -4,7 +4,7 @@ The source behind [Context Free Art](http://www.contextfreeart.org/) Playground 
 ## Requirements
 - [Docker Toolbox](https://www.docker.com/toolbox) - 1.9.0
 - Heroku Toolbelt - 3.42.21
-- [`heroku-docker`](https://devcenter.heroku.com/articles/introduction-local-development-with-docker) Toolbelt plugin - v1.1.2
+- [`heroku-docker`](https://devcenter.heroku.com/articles/introduction-local-development-with-docker) Toolbelt plugin - 1.1.2
 
 ## Running Locally with Go
 ```sh

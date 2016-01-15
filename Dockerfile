@@ -21,13 +21,6 @@ ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
-RUN useradd -d /app -m app
-USER app
-WORKDIR /app
-
-ENV HOME /app
-ENV PORT 3000
-
 # make and install cfdg
 RUN mkdir -p /tmp/cfdg
 RUN curl -s http://glyphic.s3.amazonaws.com/cfa/download/ContextFreeSource3.0.9.tgz \
@@ -42,9 +35,10 @@ RUN mkdir -p /app/.profile.d \
 	&& echo "export PATH=\"/app/usr/local/bin:\$PATH\"" > /app/.profile.d/cfdg.sh \
 	&& echo "cd /app/user" >> /app/.profile.d/cfdg.sh
 
-RUN mkdir -p /app/user
+# build go-cfdg
 WORKDIR /app/user
-
 COPY . /app/user
-RUN cd /app/user && go build -o go-cfdg
+RUN go build -o go-cfdg
+
+ENV PORT 3000
 EXPOSE 3000

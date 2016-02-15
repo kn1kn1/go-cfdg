@@ -1,8 +1,9 @@
 # go-cfdg
-The source behind [Context Free Art](http://www.contextfreeart.org/) Playground at [cfdg.herokuapp.com](https://cfdg.herokuapp.com/).
+The source behind Context Free Art Playground at [cfdg.herokuapp.com](https://cfdg.herokuapp.com/).
 
 ## Requirements
-- [Docker Toolbox](https://www.docker.com/toolbox) - 1.9.0
+- [Docker Toolbox](https://www.docker.com/toolbox) - 1.10.1
+  - docker-compose - 1.6.0
 - Heroku Toolbelt - 3.42.21
 - [`heroku-docker`](https://devcenter.heroku.com/articles/introduction-local-development-with-docker) Toolbelt plugin - 1.1.2
 

@@ -41,4 +41,6 @@ COPY . /app/user
 RUN go build -o go-cfdg
 
 ENV PORT 3000
-EXPOSE 3000
+#EXPOSE 3000
+
+CMD ./go-cfdg

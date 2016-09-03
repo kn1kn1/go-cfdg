@@ -6,10 +6,10 @@ RUN apt-get update \
 	&& rm -rf /var/cache/apt/archives/*.deb
 
 # install golang
-#  cf. https://github.com/docker-library/golang/blob/master/1.6/Dockerfile
-ENV GOLANG_VERSION 1.6
+#  cf. https://github.com/docker-library/golang/blob/master/1.7/Dockerfile
+ENV GOLANG_VERSION 1.7
 ENV GOLANG_DOWNLOAD_URL https://golang.org/dl/go$GOLANG_VERSION.linux-amd64.tar.gz
-ENV GOLANG_DOWNLOAD_SHA256 5470eac05d273c74ff8bac7bef5bad0b5abbd1c4052efbdbc8db45332e836b0b
+ENV GOLANG_DOWNLOAD_SHA256 702ad90f705365227e902b42d91dd1a40e48ca7f67a2f4b2fd052aaa4295cd95
 
 RUN curl -fsSL "$GOLANG_DOWNLOAD_URL" -o golang.tar.gz \
 	&& echo "$GOLANG_DOWNLOAD_SHA256  golang.tar.gz" | sha256sum -c - \

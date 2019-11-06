@@ -1,6 +1,0 @@
-{
-  "name": "CFDG Playground",
-  "description": "An app.json for CFDG Playground",
-  "image": "heroku/cedar:14",
-  "addons": []
-}

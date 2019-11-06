@@ -2,10 +2,8 @@
 The source behind Context Free Art Playground at [cfdg.herokuapp.com](https://cfdg.herokuapp.com/).
 
 ## Requirements
-- [Docker Toolbox](https://www.docker.com/toolbox) - 1.12.0
-  - docker-compose - 1.8.0
-- Heroku Toolbelt - 3.43.10
-- [`heroku-docker`](https://devcenter.heroku.com/articles/introduction-local-development-with-docker) Toolbelt plugin - 2.0.1
+- [Docker](https://www.docker.com/) - 19.03.4
+- [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) - 7.34.2
 
 ## Running Locally with Go
 ```sh
@@ -19,16 +17,20 @@ $ open "http://localhost:3000"
 ```sh
 $ git clone https://github.com/kn1kn1/go-cfdg.git
 $ cd go-cfdg
-$ docker-compose up web
-$ open "http://$(docker-machine ip default):3000"
+$ docker build -t cfdg . 
+$ docker run -e "PORT=3000" -p 3000:3000 -t cfdg
+$ open "http://localhost:3000"
 ```
 
 ## Deploying to Heroku
+https://devcenter.heroku.com/articles/container-registry-and-runtime
 ```sh
 $ git clone https://github.com/kn1kn1/go-cfdg.git
 $ cd go-cfdg
-$ heroku create
-$ heroku docker:release
+$ heroku login
+$ heroku container:login
+$ heroku container:push web -a cfdg
+$ heroku container:release web -a cfdg
 $ heroku open
 ```
 

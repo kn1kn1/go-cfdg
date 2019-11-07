@@ -422,3 +422,14 @@ CFDG.examples.push({
     '  CLOVER {x 1.0 s 0.99 r 90 b 0.01}\n' +
     '}'
 });
+
+CFDG.examples.push({
+  'title': 'Petal logo',
+  'code': '/* \n' +
+    ' * https://github.com/siaflab/petal\n' +
+    ' */\n' +
+    'startshape p1\n' +
+    'background {a -1}\n' +
+    'rule p0 {CIRCLE{sat .2 b 1} p0{x -.0075 s .99}}\n' +
+    'rule p1 {4 * {r 13 x .15 y -.15 sat .2 z 1} p0{}}'
+});

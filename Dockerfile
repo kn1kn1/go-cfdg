@@ -21,7 +21,7 @@ COPY . /app/user
 COPY --from=builder /app/user/go-cfdg /app/user
 
 WORKDIR /app/user
-RUN cp -p cfdg-v3.0.9 cfdg \
+RUN cp -p cfdg-v3.2.2 cfdg \
 	&& chmod +x cfdg \
 	&& mkdir -p /app/usr/local/bin \
 	&& cp cfdg /app/usr/local/bin

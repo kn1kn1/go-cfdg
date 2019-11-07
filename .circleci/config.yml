@@ -3,11 +3,9 @@ jobs:
   build:
     docker:
       - image: golang:1.13-stretch
-    working_directory: ~/repo
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
+      - setup_remote_docker
       # build Docker image      
       - run:
           name: build Docker image

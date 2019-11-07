@@ -13,10 +13,6 @@ RUN apt-get update \
 	&& apt-get -y --no-install-recommends install libpng-dev\
 	&& rm -rf /var/cache/apt/archives/*.deb
 
-RUN wget -q -O /tmp/libpng12.deb http://mirrors.kernel.org/ubuntu/pool/main/libp/libpng/libpng12-0_1.2.54-1ubuntu1_amd64.deb \
-  && dpkg -i /tmp/libpng12.deb \
-  && rm /tmp/libpng12.deb
-
 COPY . /app/user
 COPY --from=builder /app/user/go-cfdg /app/user
 

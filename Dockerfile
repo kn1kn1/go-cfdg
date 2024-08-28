@@ -1,4 +1,4 @@
-FROM golang:1.23-bullseye AS builder
+FROM golang:1.23-bookworm AS builder
 
 # install dependencies
 RUN apt-get update \
@@ -21,7 +21,7 @@ COPY . /app/user
 RUN go build -o go-cfdg
 
 
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 # install dependencies
 RUN apt-get update \
 	&& apt-get -y --force-yes --no-install-recommends install libpng-dev libicu-dev \
